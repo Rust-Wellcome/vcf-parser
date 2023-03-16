@@ -1,10 +1,4 @@
 fileignoreconfig:
-- filename: vcf-cli/target/.rustc_info.json
-  checksum: 1cb6a1e7433a9f771b770f2a2254b195aa949e05340c4cf1f0c990296ca953e4
-- filename: vcf-cli/target/debug/.fingerprint/once_cell-adb6e206fdb8198e/lib-once_cell.json
-  checksum: 92e591eda20cd55b5ea17587480b4191b2a1bf3be5539bc0ca9372c966d2ed10
-- filename: vcf-cli/target/debug/.fingerprint/once_cell-a849e4fe9fa6bc39/lib-once_cell.json
-  checksum: 114c92f9cb2acbef438d21ab70231dee75e0fdb39b4c197826a08240ece4fb05
-- filename: vcf-cli/target/debug/.fingerprint/vcf-cli-0d48ec88abad5678/bin-vcf-cli.json
-  checksum: 023a2aff2e4d5a077cc2f8a442f4b6aa5f58390daa4dbd2de06f193d847a610d
+- filename: parser/Cargo.toml
+  checksum: a902a617c4f18fa23211e76391253b7f6fba00526de4fc0241c53ca29e4fe264
 version: ""

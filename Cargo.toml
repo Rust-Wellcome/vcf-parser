@@ -2,4 +2,5 @@
 members = [
     "vcf",
     "cli",
+    "parser"
 ]
