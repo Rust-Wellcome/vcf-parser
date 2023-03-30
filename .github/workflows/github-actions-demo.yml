@@ -1,6 +1,8 @@
 name: Test
 run-name: ${{ github.actor }} is checking they haven't broken anything
 on: [push]
+env:
+  CARGO_TERM_COLOR: always
 jobs:
   Compile-And-Run-The-Tests:
     runs-on: ubuntu-latest
