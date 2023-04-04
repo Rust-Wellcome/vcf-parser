@@ -1,7 +1,5 @@
-pub mod headers {
-  pub fn it_works() {
-    1
-  }
+pub fn it_works() -> i32 {
+  1
 }
 
 #[cfg(test)]
