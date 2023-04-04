@@ -1,14 +1,15 @@
-pub fn it_works() -> i32 {
-  1
-}
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    
+    #[test]
+    fn test_invalid_without_file_format_on_first_line() {
+      panic!("Pending");
+    }
 
     #[test]
-    fn test_it_works() {
-        let result = it_works();
-        assert_eq!(result, 1);
+    fn test_invalid_without_valid_file_format_version() {
+      panic!("Pending");
     }
+
 }
