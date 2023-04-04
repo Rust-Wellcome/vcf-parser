@@ -1,4 +1,0 @@
-fileignoreconfig:
-- filename: parser/Cargo.toml
-  checksum: a902a617c4f18fa23211e76391253b7f6fba00526de4fc0241c53ca29e4fe264
-version: ""
