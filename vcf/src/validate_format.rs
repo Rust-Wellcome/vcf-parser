@@ -5,8 +5,8 @@ use std::collections::HashSet;
 /// - [ ] Check that values are of the required types.
 fn is_valid_format(input: HashMap<&str, &str>) -> bool {
         let keys: HashSet<&str> = input.keys().copied().collect();
-        let required_key = HashSet::from(["ID", "Number", "Type", "Description"]);
-        return required_key == keys;
+        let required_keys = HashSet::from(["ID", "Number", "Type", "Description"]);
+        return required_keys == keys;
 }
 
 #[cfg(test)]
