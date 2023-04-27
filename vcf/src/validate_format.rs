@@ -5,21 +5,32 @@ use regex::Regex;
 /// - [X] Check has all and only required keys.
 /// - [ ] Check that values are of the required types.
 fn is_valid_format(input: HashMap<&str, &str>) -> bool {
-        //TODO - Don't compile regex in function.
-        let valid_number_regex = Regex::new(r"^(\d+|G|A|R|\.)$").unwrap();
-        let keys: HashSet<&str> = input.keys().copied().collect();
-        let required_keys = HashSet::from(["ID", "Number", "Type", "Description"]);
-        if !(required_keys == keys) {return false};
-        if !([&"Integer", &"Float", &"Character", &"String"].map(|s| Some(s)).contains(&input.get("Type"))) {return false};
-        if !(
-            match input.get("Number") {
-                Some(s) => {println!("Number is: {}", s); valid_number_regex.is_match(s)},
-                None => false,
-            }
-        ) {
-            return false
-        };
-        return true;
+    return
+        has_required_keys(&input)
+        & has_valid_type_value(&input)
+        & has_valid_number_value(&input);
+}
+
+fn has_required_keys(input: &HashMap<&str, &str>) -> bool {
+    let keys: HashSet<&str> = input.keys().copied().collect();
+    let required_keys = HashSet::from(["ID", "Number", "Type", "Description"]);
+    return required_keys == keys;
+}
+
+fn has_valid_type_value(input: &HashMap<&str, &str>) -> bool {
+    return
+        [&"Integer", &"Float", &"Character", &"String"]
+        .map(|s| Some(s))
+        .contains(&input.get("Type"));
+}
+
+fn has_valid_number_value(input: &HashMap<&str, &str>) -> bool {
+    //TODO - Don't compile regex in function.
+    let valid_number_regex = Regex::new(r"^(\d+|G|A|R|\.)$").unwrap();
+    return match input.get("Number") {
+        Some(s) => valid_number_regex.is_match(s),
+        None => false,
+    }
 }
 
 #[cfg(test)]
