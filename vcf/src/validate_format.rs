@@ -1,12 +1,36 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
+use regex::Regex;
 
 /// - [X] Check has all and only required keys.
 /// - [ ] Check that values are of the required types.
 fn is_valid_format(input: HashMap<&str, &str>) -> bool {
-        let keys: HashSet<&str> = input.keys().copied().collect();
-        let required_keys = HashSet::from(["ID", "Number", "Type", "Description"]);
-        return required_keys == keys;
+    return
+        has_required_keys(&input)
+        & has_valid_type_value(&input)
+        & has_valid_number_value(&input);
+}
+
+fn has_required_keys(input: &HashMap<&str, &str>) -> bool {
+    let keys: HashSet<&str> = input.keys().copied().collect();
+    let required_keys = HashSet::from(["ID", "Number", "Type", "Description"]);
+    return required_keys == keys;
+}
+
+fn has_valid_type_value(input: &HashMap<&str, &str>) -> bool {
+    return
+        [&"Integer", &"Float", &"Character", &"String"]
+        .map(|s| Some(s))
+        .contains(&input.get("Type"));
+}
+
+fn has_valid_number_value(input: &HashMap<&str, &str>) -> bool {
+    //TODO - Don't compile regex in function.
+    let valid_number_regex = Regex::new(r"^(\d+|G|A|R|\.)$").unwrap();
+    return match input.get("Number") {
+        Some(s) => valid_number_regex.is_match(s),
+        None => false,
+    }
 }
 
 #[cfg(test)]
@@ -91,6 +115,230 @@ mod tests {
         ]);
 
         let result = is_valid_format(extra_key_input);
+
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn returns_true_if_type_is_Integer() {
+        let integer_value_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3"),
+            ("Type", "Integer"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(integer_value_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_type_is_Float() {
+        let float_value_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3"),
+            ("Type", "Float"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(float_value_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_type_is_Character() {
+        let character_value_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3"),
+            ("Type", "Character"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(character_value_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_type_is_String() {
+        let string_value_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(string_value_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_false_if_type_is_not_valid() {
+        let string_value_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3"),
+            ("Type", "Number"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(string_value_input);
+
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_single_figure_positive_integer() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "1"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_multiple_figure_positive_integer() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "33"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_zero() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "0"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_false_if_number_is_negative() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "-3"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn returns_false_if_number_has_fractional_part() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "3.0"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_A() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "A"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_R() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "R"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_is_number_is_G() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "G"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_true_if_number_is_dot() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "."),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn returns_false_if_number_is_not_special_character() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", "B"),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
+
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn returns_false_if_number_is_empty() {
+        let valid_input = HashMap::from([
+            ("ID", "ID123"),
+            ("Number", ""),
+            ("Type", "String"),
+            ("Description", "This is a thing"),
+        ]);
+
+        let result = is_valid_format(valid_input);
 
         assert_eq!(result, false);
     }
