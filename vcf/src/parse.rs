@@ -27,4 +27,5 @@ impl<'src> HeaderValue<'src> {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParseError;
