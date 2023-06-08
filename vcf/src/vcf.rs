@@ -1,12 +1,20 @@
 use std::io::Read;
+use std::io::BufReader;
+use std::io::BufRead;
+use crate::Header;
+use crate::HeaderValue::Flat;
 
-pub struct VCF;
+pub struct VCF {
+    pub file_format: String,
+}
 #[derive(Debug)]
 pub struct VCFError;
 
 /// Create a VCF object from a file.
 ///
 /// Given a valid file, one can obtain an object continaing the VCF data.
+///
+/// For example, we can check the version of a vcf file as follows.
 /// 
 /// ```
 /// use vcf::vcf::parse_vcf;
@@ -36,9 +44,16 @@ pub struct VCFError;
 /// 20 1234567 microsat1 GTC G,GTCT 50 PASS NS=3;DP=9;AA=G GT:GQ:DP 0/1:35:4 0/2:17:2 1/1:40:3
 /// "#;
 ///# use vcf::vcf::VCFError;
-/// parse_vcf(&vcf_source[..])?;
+/// let vcf = parse_vcf(&vcf_source[..])?;
+/// assert_eq!(vcf.file_format, "VCFv4.4");
 ///# Ok::<(), VCFError>(())
 /// ```
 pub fn parse_vcf(source: impl Read) ->  Result<VCF, VCFError> {
-    return Ok(VCF);
+    let mut buf = BufReader::new(source);
+    let mut first_line = String::new();
+    buf.read_line(& mut first_line);
+    return match Header::parse(&first_line).unwrap().value {
+        Flat(s) => Ok(VCF {file_format: s.to_string()}),
+        _ => panic!(),
+    };
 }
