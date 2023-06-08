@@ -1,9 +1,12 @@
 use std::io::Read;
 
 pub struct VCF;
+#[derive(Debug)]
 pub struct VCFError;
 
 /// Create a VCF object from a file.
+///
+/// Given a valid file, one can obtain an object continaing the VCF data.
 /// 
 /// ```
 /// use vcf::vcf::parse_vcf;
@@ -33,10 +36,9 @@ pub struct VCFError;
 /// 20 1230237 . T . 47 PASS NS=3;DP=13;AA=T GT:GQ:DP:HQ 0|0:54:7:56,60 0|0:48:4:51,51 0/0:61:2
 /// 20 1234567 microsat1 GTC G,GTCT 50 PASS NS=3;DP=9;AA=G GT:GQ:DP 0/1:35:4 0/2:17:2 1/1:40:3
 /// "#;
-/// match parse_vcf(&vcf_source[..]) {
-///     Ok(vcf) => {assert!(true);}
-///     Err(err) => {assert!(false);}
-/// }
+///# use vcf::vcf::VCFError;
+/// parse_vcf(&vcf_source[..])?;
+///# Ok::<(), VCFError>(())
 /// ```
 pub fn parse_vcf(source: impl Read) ->  Result<VCF, VCFError> {
     return Ok(VCF);
