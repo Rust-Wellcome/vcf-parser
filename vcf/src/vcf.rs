@@ -10,8 +10,7 @@ pub struct VCFError;
 /// 
 /// ```
 /// use vcf::vcf::parse_vcf;
-/// let vcf_source = br#"\
-/// ###fileformat=VCFv4.4
+/// let vcf_source = br#"##fileformat=VCFv4.4
 /// ###fileDate=20090805
 /// ###source=myImputationProgramV3.1
 /// ###reference=file:///seq/references/1000GenomesPilot-NCBI36.fasta
