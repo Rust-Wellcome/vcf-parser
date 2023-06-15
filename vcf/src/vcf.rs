@@ -3,7 +3,6 @@ use std::io::Read;
 /// Create a VCF object from a file.
 /// 
 /// ```
-/// use std::fs::File;
 /// use vcf::vcf::parse_vcf;
 /// let vcf_source = br#"\
 /// ###fileformat=VCFv4.4
