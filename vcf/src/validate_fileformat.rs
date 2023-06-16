@@ -4,7 +4,19 @@ use crate::headers::Header;
 use crate::headers::HeaderValue::{Flat, Nested};
 
 fn is_valid_file_format(input: Header) -> bool {
-    return false;
+    is_flat(&input)
+    & key_is_fileformat(&input)
+}
+
+fn is_flat(input: &Header) -> bool {
+    match input.value {
+        Flat(..) => true,
+        _ => false,
+    }
+}
+
+fn key_is_fileformat(input: &Header) -> bool {
+    input.key == "fileformat"
 }
 
 #[cfg(test)]
