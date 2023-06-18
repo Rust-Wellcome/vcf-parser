@@ -3,6 +3,7 @@ use std::io::BufReader;
 use std::io::BufRead;
 use crate::Header;
 use crate::HeaderValue::Flat;
+use crate::validate_fileformat::is_valid_file_format;
 
 pub struct VCF {
     pub file_format: String,
@@ -88,8 +89,13 @@ pub fn parse_vcf(source: impl Read) ->  Result<VCF, VCFError> {
     let mut buf = BufReader::new(source);
     let mut first_line = String::new();
     buf.read_line(& mut first_line);
-    return match Header::parse(&first_line).unwrap().value {
-        Flat(s) => Ok(VCF {file_format: s.to_string()}),
-        _ => panic!(),
-    };
+    let parsed = Header::parse(&first_line).unwrap();
+    if is_valid_file_format(&parsed) {
+        match parsed.value {
+            Flat(s) => Ok(VCF {file_format: s.to_string()}),
+            _ => panic!(),
+        }
+    } else {
+        Err(VCFError)
+    }
 }
