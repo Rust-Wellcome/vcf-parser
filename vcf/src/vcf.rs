@@ -1,5 +1,3 @@
-use std::io::Read;
-use std::io::BufReader;
 use std::io::BufRead;
 use crate::Header;
 use crate::HeaderValue::Flat;
@@ -85,10 +83,8 @@ pub struct VCFError;
 ///     _ => assert!(false),
 /// };
 /// ```
-pub fn parse_vcf(source: impl Read) ->  Result<VCF, VCFError> {
-    let mut buf = BufReader::new(source);
-    let mut first_line = String::new();
-    buf.read_line(& mut first_line);
+pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
+    let first_line = source.lines().next().unwrap().expect("This should just bloody work");
     let parsed = Header::parse(&first_line).unwrap();
     if is_valid_file_format(&parsed) {
         match parsed.value {
