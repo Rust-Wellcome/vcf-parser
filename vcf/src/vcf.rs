@@ -1,3 +1,4 @@
+use std::io;
 use std::io::BufRead;
 use crate::Header;
 use crate::HeaderValue::Flat;
@@ -6,8 +7,18 @@ use crate::validate_fileformat::is_valid_file_format;
 pub struct VCF {
     pub file_format: String,
 }
+
 #[derive(Debug)]
-pub struct VCFError;
+pub enum VCFError {
+    ParseError,
+    IoError(io::Error),
+}
+
+impl From<io::Error> for VCFError {
+    fn from(error: io::Error) -> Self {
+        VCFError::IoError(error)
+    }
+}
 
 /// Create a VCF object from a file.
 ///
@@ -84,14 +95,14 @@ pub struct VCFError;
 /// };
 /// ```
 pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
-    let first_line = source.lines().next().unwrap().expect("This should just bloody work");
-    let parsed = Header::parse(&first_line).unwrap();
+    let first_line = source.lines().next().ok_or(VCFError::ParseError)??;
+    let parsed = Header::parse(&first_line)?;
     if is_valid_file_format(&parsed) {
         match parsed.value {
             Flat(s) => Ok(VCF {file_format: s.to_string()}),
             _ => panic!(),
         }
     } else {
-        Err(VCFError)
+        Err(VCFError::ParseError)
     }
 }
