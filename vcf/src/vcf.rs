@@ -3,6 +3,7 @@ use std::io::BufRead;
 use crate::Header;
 use crate::HeaderValue::Flat;
 use crate::validate_fileformat::is_valid_file_format;
+use crate::parse;
 
 pub struct VCF {
     pub file_format: String,
@@ -17,6 +18,12 @@ pub enum VCFError {
 impl From<io::Error> for VCFError {
     fn from(error: io::Error) -> Self {
         VCFError::IoError(error)
+    }
+}
+
+impl From<parse::ParseError> for VCFError {
+    fn from(error: parse::ParseError) -> Self {
+        VCFError::ParseError
     }
 }
 
