@@ -144,12 +144,12 @@ impl From<parse::ParseError> for VCFError {
 pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
     let first_line = source.lines().next().ok_or(VCFError::ParseError)??;
     let parsed = Header::parse(&first_line)?;
-    if is_valid_file_format(&parsed) {
-        match parsed.value {
-            Flat(s) => Ok(VCF {file_format: s.to_string()}),
-            _ => panic!(),
-        }
-    } else {
-        Err(VCFError::ParseError)
+    if !is_valid_file_format(&parsed) {
+        return Err(VCFError::ParseError)
     }
+    let file_format = match parsed.value {
+        Flat(s) => s.to_string(),
+        _ => panic!(),
+    };
+    Ok(VCF {file_format: file_format.to_string()})
 }
