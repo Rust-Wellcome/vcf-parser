@@ -133,7 +133,12 @@ impl From<parse::ParseError> for VCFError {
 /// "#;
 ///# use vcf::vcf::VCFError;
 /// let vcf = parse_vcf(&vcf_source[..])?;
-/// assert_eq!(vcf.format, "VCFv4.4");
+/// let hq_description = vcf.format
+///     .iter()
+///     .find(|item| match item.get("ID") {Some("HQ") => true, _ => false})
+///     .and_then(|item| item.get("Description"))
+///     .unwrap();
+/// assert_eq!(hq_description, "Haplotype Quality");
 ///# Ok::<(), VCFError>(())
 /// ```
 pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
