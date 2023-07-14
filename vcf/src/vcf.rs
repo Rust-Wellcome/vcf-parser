@@ -151,5 +151,14 @@ pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
         Flat(s) => s.to_string(),
         _ => panic!(),
     };
+    let formats: Result<Vec<_>, VCFError> = source
+        .lines()
+        .map(
+            |result| match result {
+                Ok(line) => Header::parse(&line).map_err(VCFError::from),
+                Err(e) => Err(VCFError::IoError(e)),
+            }
+        )
+        .collect();
     Ok(VCF {file_format: file_format.to_string()})
 }
