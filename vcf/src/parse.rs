@@ -19,14 +19,14 @@ impl Header {
             .and_then(|line| line.split_once('='))
             .ok_or(ParseError)?;
         let value = HeaderValue::parse(value)?;
-        Ok(Self { key, value })
+        Ok(Self { key.to_string(), value })
     }
 }
 
 impl HeaderValue {
     pub fn parse(input: &str) -> Result<Self, ParseError> {
         match input.strip_prefix('<').and_then(|input| input.strip_suffix('>')) {
-            None => Ok(Self::Flat(input)),
+            None => Ok(Self::Flat(input.to_string())),
             Some(pairs) => {
                 HEADER_VALUE_REGEX.captures_iter(pairs)
                     .map(|c| c.get(0).unwrap().as_str())
@@ -38,9 +38,19 @@ impl HeaderValue {
                         }
                     )
                     .collect::<Result<HashMap<_, _>, _>>()
+                    .map(|hm| hm.to_string())
                     .map(HeaderValue::Nested)
             }
         }
+    }
+}
+
+impl <&str> HashMap {
+    pub fn to_string(self) -> HashMap<String, String> {
+        self
+        .into_iter()
+        .map(|(key, value)| (key.to_string(), value.to_string))
+        .collect()::<HashMap<String, String>>
     }
 }
 
