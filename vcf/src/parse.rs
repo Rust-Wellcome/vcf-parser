@@ -12,6 +12,14 @@ lazy_static! {
     static ref HEADER_VALUE_REGEX: Regex = Regex::new(r#"(?:[^,"]+|(?:"[^"]*"))+"#).unwrap();
 }
 
+pub fn convert_to_string(hm: HashMap<&str, &str>) -> HashMap<String, String> {
+    hm
+    .into_iter()
+    .map(|(key, value)| (key.to_string(), value.to_string))
+    .collect::<HashMap<String, String>>()
+}
+
+
 impl Header {
     pub fn parse(input: &str) -> Result<Self, ParseError> {
         let line = input.trim();
@@ -38,19 +46,10 @@ impl HeaderValue {
                         }
                     )
                     .collect::<Result<HashMap<_, _>, _>>()
-                    .map(|hm| hm.to_string())
+                    .map(convert_to_string)
                     .map(HeaderValue::Nested)
             }
         }
-    }
-}
-
-impl <&str> HashMap {
-    pub fn to_string(self) -> HashMap<String, String> {
-        self
-        .into_iter()
-        .map(|(key, value)| (key.to_string(), value.to_string))
-        .collect()::<HashMap<String, String>>
     }
 }
 
