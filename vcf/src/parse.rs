@@ -15,7 +15,7 @@ lazy_static! {
 pub fn convert_to_string(hm: HashMap<&str, &str>) -> HashMap<String, String> {
     hm
     .into_iter()
-    .map(|(key, value)| (key.to_string(), value.to_string))
+    .map(|(key, value)| (key.to_string(), value.to_string()))
     .collect::<HashMap<String, String>>()
 }
 

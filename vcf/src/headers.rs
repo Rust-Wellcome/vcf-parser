@@ -34,15 +34,15 @@ mod tests {
             headers,
             vec![
                 Header {
-                    key: "fileformat",
-                    value: HeaderValue::Flat("VCFv1.4"),
+                    key: "fileformat".to_string(),
+                    value: HeaderValue::Flat("VCFv1.4".to_string()),
                 },
                 Header {
-                    key: "INFO",
+                    key: "INFO".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "123"),
-                        ("xyz", "3125"),
-                        ("sfh", "574"),
+                        ("abc".to_string(), "123".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "574".to_string()),
                     ])),
                 },
             ],
