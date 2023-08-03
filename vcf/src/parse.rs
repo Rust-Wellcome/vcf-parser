@@ -27,7 +27,7 @@ impl Header {
             .and_then(|line| line.split_once('='))
             .ok_or(ParseError)?;
         let value = HeaderValue::parse(value)?;
-        Ok(Self { key.to_string(), value })
+        Ok(Self { key: key.to_string(), value: value })
     }
 }
 
