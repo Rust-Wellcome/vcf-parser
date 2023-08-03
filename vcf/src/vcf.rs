@@ -142,7 +142,8 @@ impl From<parse::ParseError> for VCFError {
 ///# Ok::<(), VCFError>(())
 /// ```
 pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
-    let first_line = source.lines().next().ok_or(VCFError::ParseError)??;
+    let mut lines = source.lines();
+    let first_line = lines.next().ok_or(VCFError::ParseError)??;
     let parsed = Header::parse(&first_line)?;
     if !is_valid_file_format(&parsed) {
         return Err(VCFError::ParseError)
@@ -151,11 +152,10 @@ pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
         Flat(s) => s.to_string(),
         _ => panic!(),
     };
-    let formats: Result<Vec<_>, VCFError> = source
-        .lines()
+    let formats: Result<Vec<_>, VCFError> = lines
         .map(
             |result| match result {
-                Ok(line) => Header::parse(&line).map_err(VCFError::from),
+                Ok(ref line) => Header::parse(line).map_err(VCFError::from),
                 Err(e) => Err(VCFError::IoError(e)),
             }
         )
