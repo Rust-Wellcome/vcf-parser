@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Header<'src> {
-    pub key: &'src str,
-    pub value: HeaderValue<'src>,
+pub struct Header {
+    pub key: String,
+    pub value: HeaderValue,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum HeaderValue<'src> {
-    Flat(&'src str),
-    Nested(HashMap<&'src str, &'src str>),
+pub enum HeaderValue {
+    Flat(String),
+    Nested(HashMap<String, String>),
 }
 
 #[cfg(test)]
