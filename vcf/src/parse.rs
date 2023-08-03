@@ -12,8 +12,8 @@ lazy_static! {
     static ref HEADER_VALUE_REGEX: Regex = Regex::new(r#"(?:[^,"]+|(?:"[^"]*"))+"#).unwrap();
 }
 
-impl<'src> Header<'src> {
-    pub fn parse(input: &'src str) -> Result<Self, ParseError> {
+impl Header {
+    pub fn parse(input: &str) -> Result<Self, ParseError> {
         let line = input.trim();
         let (key, value) = line.strip_prefix("##")
             .and_then(|line| line.split_once('='))
@@ -23,8 +23,8 @@ impl<'src> Header<'src> {
     }
 }
 
-impl<'src> HeaderValue<'src> {
-    pub fn parse(input: &'src str) -> Result<Self, ParseError> {
+impl HeaderValue {
+    pub fn parse(input: &str) -> Result<Self, ParseError> {
         match input.strip_prefix('<').and_then(|input| input.strip_suffix('>')) {
             None => Ok(Self::Flat(input)),
             Some(pairs) => {
