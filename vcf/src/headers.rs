@@ -48,4 +48,44 @@ mod tests {
             ],
         );
     }
+
+    #[test]
+    fn can_parse_when_quoted_text_contains_comma_in_last_key_value_pair() {
+        let input = "##FORMAT=<abc=123,xyz=3125,sfh=\"1,574\">";
+        let header = Header::parse(input);
+
+        assert_eq!(
+            header,
+            Ok(
+                Header {
+                    key: "FORMAT",
+                    value: HeaderValue::Nested(HashMap::from([
+                        ("abc", "123"),
+                        ("xyz", "3125"),
+                        ("sfh", "1,574"),
+                    ])),
+                }
+            )
+        );
+    }
+
+    #[test]
+    fn can_parse_when_quoted_text_contains_comma_in_first_key_value_pair() {
+        let input = "##FORMAT=<abc=\"1,233\",xyz=3125,sfh=157>";
+        let header = Header::parse(input);
+
+        assert_eq!(
+            header,
+            Ok(
+                Header {
+                    key: "FORMAT",
+                    value: HeaderValue::Nested(HashMap::from([
+                        ("abc", "1,233"),
+                        ("xyz", "3125"),
+                        ("sfh", "157"),
+                    ])),
+                }
+            )
+        );
+    }
 }
