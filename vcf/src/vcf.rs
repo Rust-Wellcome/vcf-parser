@@ -7,6 +7,7 @@ use crate::parse;
 
 pub struct VCF {
     pub file_format: String,
+    pub format: Vec<Header>,
 }
 
 #[derive(Debug)]
@@ -152,13 +153,18 @@ pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
         Flat(s) => s.to_string(),
         _ => panic!(),
     };
-    let formats: Result<Vec<_>, VCFError> = lines
+    let formats = lines
         .map(
             |result| match result {
                 Ok(ref line) => Header::parse(line).map_err(VCFError::from),
                 Err(e) => Err(VCFError::IoError(e)),
             }
         )
-        .collect();
-    Ok(VCF {file_format: file_format.to_string()})
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(
+        VCF {
+            file_format: file_format.to_string(),
+            format: formats,
+        }
+    )
 }
