@@ -24,6 +24,12 @@ impl<'src> HeaderValue<'src> {
                 re.captures_iter(pairs)
                     .map(|c| c.get(0).unwrap().as_str())
                     .map(|pair| pair.split_once('=').ok_or(ParseError))
+                    .map(
+                        |r| match r {
+                            Ok((k, v)) => Ok((k, v.trim_matches('\"'))),
+                            x => x,
+                        }
+                    )
                     .collect::<Result<HashMap<_, _>, _>>()
                     .map(HeaderValue::Nested)
             }
