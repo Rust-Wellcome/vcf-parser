@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use regex::Regex;
+
 use crate::{Header, HeaderValue};
 
 impl<'src> Header<'src> {
@@ -15,10 +17,12 @@ impl<'src> Header<'src> {
 
 impl<'src> HeaderValue<'src> {
     pub fn parse(input: &'src str) -> Result<Self, ParseError> {
+        let re = Regex::new(r#"((?:[^,"]+|(?:"[^"]*"))+)"#).unwrap();
         match input.strip_prefix('<').and_then(|input| input.strip_suffix('>')) {
             None => Ok(Self::Flat(input)),
             Some(pairs) => {
-                pairs.split(',')
+                re.captures_iter(pairs)
+                    .map(|c| c.get(0).unwrap().as_str())
                     .map(|pair| pair.split_once('=').ok_or(ParseError))
                     .collect::<Result<HashMap<_, _>, _>>()
                     .map(HeaderValue::Nested)
