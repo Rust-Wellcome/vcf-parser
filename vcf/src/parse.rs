@@ -22,6 +22,7 @@ pub fn convert_to_string(hm: HashMap<&str, &str>) -> HashMap<String, String> {
 
 impl Header {
     pub fn parse(input: &str) -> Result<Self, ParseError> {
+        println!("Parsing header input: {}", input);
         let line = input.trim();
         let (key, value) = line.strip_prefix("##")
             .and_then(|line| line.split_once('='))

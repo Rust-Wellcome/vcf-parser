@@ -62,7 +62,10 @@ impl From<parse::ParseError> for VCFError {
 /// 20 1234567 microsat1 GTC G,GTCT 50 PASS NS=3;DP=9;AA=G GT:GQ:DP 0/1:35:4 0/2:17:2 1/1:40:3
 /// "#;
 ///# use vcf::vcf::VCFError;
-/// let vcf = parse_vcf(&vcf_source[..])?;
+/// let vcf = match parse_vcf(&vcf_source[..]) {
+///     Ok(vcf) => vcf,
+///     Err(_) => panic!("Error when we should be ok")
+/// };
 /// assert_eq!(vcf.file_format, "VCFv4.4");
 ///# Ok::<(), VCFError>(())
 /// ```
