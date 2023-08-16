@@ -58,11 +58,11 @@ mod tests {
             header,
             Ok(
                 Header {
-                    key: "FORMAT",
+                    key: "FORMAT".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "123"),
-                        ("xyz", "3125"),
-                        ("sfh", "1,574"),
+                        ("abc".to_string(), "123".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "1,574".to_string()),
                     ])),
                 }
             )
@@ -78,11 +78,11 @@ mod tests {
             header,
             Ok(
                 Header {
-                    key: "FORMAT",
+                    key: "FORMAT".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "1,233"),
-                        ("xyz", "3125"),
-                        ("sfh", "157"),
+                        ("abc".to_string(), "1,233".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "157".to_string()),
                     ])),
                 }
             )
