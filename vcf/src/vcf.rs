@@ -157,6 +157,7 @@ pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
         _ => panic!(),
     };
     let formats = lines
+        .take_while(|s| match s { Ok(s) => s.starts_with("##"), _ => true})
         .map(
             |result| match result {
                 Ok(ref line) => Header::parse(line).map_err(VCFError::from),
