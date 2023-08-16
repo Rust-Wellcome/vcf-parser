@@ -17,7 +17,7 @@ impl<'src> Header<'src> {
 
 impl<'src> HeaderValue<'src> {
     pub fn parse(input: &'src str) -> Result<Self, ParseError> {
-        let re = Regex::new(r#"((?:[^,"]+|(?:"[^"]*"))+)"#).unwrap();
+        let re = Regex::new(r#"(?:[^,"]+|(?:"[^"]*"))+"#).unwrap();
         match input.strip_prefix('<').and_then(|input| input.strip_suffix('>')) {
             None => Ok(Self::Flat(input)),
             Some(pairs) => {
