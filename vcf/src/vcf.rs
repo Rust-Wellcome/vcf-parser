@@ -109,7 +109,9 @@ impl From<parse::ParseError> for VCFError {
 /// Similarly, we can obtain the format information for a file via the `format` attribute.
 ///
 /// ```
+/// use std::collections::HashMap;
 /// use vcf::vcf::parse_vcf;
+/// use vcf::{Header, HeaderValue};
 /// let vcf_source = br#"##fileformat=VCFv4.4
 /// ###fileDate=20090805
 /// ###source=myImputationProgramV3.1
@@ -139,10 +141,24 @@ impl From<parse::ParseError> for VCFError {
 /// let vcf = parse_vcf(&vcf_source[..])?;
 /// let hq_description = vcf.format
 ///     .iter()
-///     .find(|item| match item.get("ID") {Some("HQ") => true, _ => false})
-///     .and_then(|item| item.get("Description"))
-///     .unwrap();
-/// assert_eq!(hq_description, "Haplotype Quality");
+///     .find(
+///         |item| match &item.value {
+///             HeaderValue::Nested(d) => match d.get("ID") {Some(v) => v == "HQ", _ => false},
+///             _ => false
+///         }
+///     ).unwrap();
+/// assert_eq!(
+///     *hq_description,
+///     Header {
+///        key: "FORMAT".to_string(),
+///        value: HeaderValue::Nested(HashMap::from([
+///            ("ID".to_string(), "HQ".to_string()),
+///            ("Number".to_string(), "2".to_string()),
+///            ("Type".to_string(), "Integer".to_string()),
+///            ("Description".to_string(), "Haplotype Quality".to_string()),
+///        ]))
+///     }
+/// );
 ///# Ok::<(), VCFError>(())
 /// ```
 pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
