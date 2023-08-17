@@ -139,7 +139,7 @@ impl From<parse::ParseError> for VCFError {
 /// "#;
 ///# use vcf::vcf::VCFError;
 /// let vcf = parse_vcf(&vcf_source[..])?;
-/// let hq_description = vcf.format
+/// let hq = vcf.format
 ///     .iter()
 ///     .find(
 ///         |item| match &item.value {
@@ -148,7 +148,7 @@ impl From<parse::ParseError> for VCFError {
 ///         }
 ///     ).unwrap();
 /// assert_eq!(
-///     *hq_description,
+///     *hq,
 ///     Header {
 ///        key: "FORMAT".to_string(),
 ///        value: HeaderValue::Nested(HashMap::from([
