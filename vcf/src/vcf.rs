@@ -180,6 +180,13 @@ pub fn parse_vcf(source: impl BufRead) ->  Result<VCF, VCFError> {
                 Err(e) => Err(VCFError::IoError(e)),
             }
         )
+        .filter(
+            |result| match result {
+                Ok(header) if header.key == "FORMAT" => true,
+                Err(_) => true,
+                _ => false,
+            }
+        )
         .collect::<Result<Vec<_>, _>>()?;
     Ok(
         VCF {
