@@ -12,21 +12,30 @@ lazy_static! {
     static ref HEADER_VALUE_REGEX: Regex = Regex::new(r#"(?:[^,"]+|(?:"[^"]*"))+"#).unwrap();
 }
 
-impl<'src> Header<'src> {
-    pub fn parse(input: &'src str) -> Result<Self, ParseError> {
+pub fn convert_to_string(hm: HashMap<&str, &str>) -> HashMap<String, String> {
+    hm
+    .into_iter()
+    .map(|(key, value)| (key.to_string(), value.to_string()))
+    .collect::<HashMap<String, String>>()
+}
+
+
+impl Header {
+    pub fn parse(input: &str) -> Result<Self, ParseError> {
+        println!("Parsing header input: {}", input);
         let line = input.trim();
         let (key, value) = line.strip_prefix("##")
             .and_then(|line| line.split_once('='))
             .ok_or(ParseError)?;
         let value = HeaderValue::parse(value)?;
-        Ok(Self { key, value })
+        Ok(Self { key: key.to_string(), value: value })
     }
 }
 
-impl<'src> HeaderValue<'src> {
-    pub fn parse(input: &'src str) -> Result<Self, ParseError> {
+impl HeaderValue {
+    pub fn parse(input: &str) -> Result<Self, ParseError> {
         match input.strip_prefix('<').and_then(|input| input.strip_suffix('>')) {
-            None => Ok(Self::Flat(input)),
+            None => Ok(Self::Flat(input.to_string())),
             Some(pairs) => {
                 HEADER_VALUE_REGEX.captures_iter(pairs)
                     .map(|c| c.get(0).unwrap().as_str())
@@ -38,6 +47,7 @@ impl<'src> HeaderValue<'src> {
                         }
                     )
                     .collect::<Result<HashMap<_, _>, _>>()
+                    .map(convert_to_string)
                     .map(HeaderValue::Nested)
             }
         }

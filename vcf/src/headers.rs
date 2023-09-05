@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Header<'src> {
-    pub key: &'src str,
-    pub value: HeaderValue<'src>,
+pub struct Header {
+    pub key: String,
+    pub value: HeaderValue,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum HeaderValue<'src> {
-    Flat(&'src str),
-    Nested(HashMap<&'src str, &'src str>),
+pub enum HeaderValue {
+    Flat(String),
+    Nested(HashMap<String, String>),
 }
 
 #[cfg(test)]
@@ -34,15 +34,15 @@ mod tests {
             headers,
             vec![
                 Header {
-                    key: "fileformat",
-                    value: HeaderValue::Flat("VCFv1.4"),
+                    key: "fileformat".to_string(),
+                    value: HeaderValue::Flat("VCFv1.4".to_string()),
                 },
                 Header {
-                    key: "INFO",
+                    key: "INFO".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "123"),
-                        ("xyz", "3125"),
-                        ("sfh", "574"),
+                        ("abc".to_string(), "123".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "574".to_string()),
                     ])),
                 },
             ],
@@ -58,11 +58,11 @@ mod tests {
             header,
             Ok(
                 Header {
-                    key: "FORMAT",
+                    key: "FORMAT".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "123"),
-                        ("xyz", "3125"),
-                        ("sfh", "1,574"),
+                        ("abc".to_string(), "123".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "1,574".to_string()),
                     ])),
                 }
             )
@@ -78,11 +78,11 @@ mod tests {
             header,
             Ok(
                 Header {
-                    key: "FORMAT",
+                    key: "FORMAT".to_string(),
                     value: HeaderValue::Nested(HashMap::from([
-                        ("abc", "1,233"),
-                        ("xyz", "3125"),
-                        ("sfh", "157"),
+                        ("abc".to_string(), "1,233".to_string()),
+                        ("xyz".to_string(), "3125".to_string()),
+                        ("sfh".to_string(), "157".to_string()),
                     ])),
                 }
             )
